@@ -1,4 +1,6 @@
 import { createClient } from "@supabase/supabase-js"
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
+import { cookies } from "next/headers"
 
 // Creamos un cliente para el lado del servidor
 export const createServerSupabaseClient = () => {
@@ -11,9 +13,15 @@ export const createServerSupabaseClient = () => {
 
   return createClient(supabaseUrl, supabaseKey, {
     auth: {
-      persistSession: false, // No necesitamos persistir la sesión en el servidor
+      persistSession: false,
     },
   })
+}
+
+// Cliente para componentes de servidor
+export const createServerComponentSupabaseClient = () => {
+  const cookieStore = cookies()
+  return createServerComponentClient({ cookies: () => cookieStore })
 }
 
 // Creamos un cliente para el lado del cliente

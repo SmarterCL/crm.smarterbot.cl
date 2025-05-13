@@ -1,6 +1,7 @@
 import type React from "react"
 import "@/app/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { AuthProvider } from "@/contexts/auth-context"
 
 export const metadata = {
   title: "SmarterOS Hub",
@@ -17,7 +18,7 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          {children}
+          <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>
       </body>
     </html>

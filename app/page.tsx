@@ -2,7 +2,6 @@ import Image from "next/image"
 import Link from "next/link"
 import {
   Bell,
-  ChevronDown,
   MessageSquare,
   Plus,
   Search,
@@ -14,7 +13,6 @@ import {
   ArrowRight,
   Database,
 } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -29,6 +27,7 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar"
 import { SidebarProvider } from "@/components/ui/sidebar"
+import { UserProfile } from "@/components/user-profile"
 
 export default function Dashboard() {
   return (
@@ -37,7 +36,7 @@ export default function Dashboard() {
         <Sidebar className="border-r border-[#1e2a3b]">
           <SidebarHeader className="flex items-center justify-center p-4">
             <div className="flex flex-col items-center">
-              <Image src="/images/logo.png" alt="SmarterOS Logo" width={80} height={80} className="mb-2" />
+              <Image src="/images/logo.png" alt="SmarterOS Logo" width={80} height={80} className="mb-2" priority />
               <h1 className="text-xl font-bold">SmarterOS</h1>
             </div>
           </SidebarHeader>
@@ -114,14 +113,7 @@ export default function Dashboard() {
                     3
                   </span>
                 </Button>
-                <Button variant="ghost" className="gap-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src="/placeholder.svg?height=32&width=32" alt="Avatar" />
-                    <AvatarFallback>US</AvatarFallback>
-                  </Avatar>
-                  <span className="hidden md:inline-flex">Usuario</span>
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
+                <UserProfile />
               </div>
             </div>
           </header>
@@ -143,7 +135,7 @@ export default function Dashboard() {
                     width={120}
                     height={120}
                     className="mx-auto md:mx-0"
-                    priority // Añadir priority para mejorar LCP
+                    priority
                   />
                   <div className="space-y-4">
                     <p className="text-gray-300">
