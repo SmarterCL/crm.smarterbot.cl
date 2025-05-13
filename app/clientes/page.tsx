@@ -96,17 +96,21 @@ export default async function ClientesPage() {
           <Table>
             <TableHeader className="bg-[#0a1525]">
               <TableRow className="hover:bg-[#0a1525]/80 border-[#2a3a4b]">
-                <TableHead className="w-[50px]">#</TableHead>
-                <TableHead>
+                <TableHead className="w-[50px]" scope="col">
+                  #
+                </TableHead>
+                <TableHead scope="col">
                   <div className="flex items-center gap-1">
                     Cliente
-                    <ArrowUpDown className="h-3 w-3" />
+                    <ArrowUpDown className="h-3 w-3" aria-hidden="true" />
                   </div>
                 </TableHead>
-                <TableHead>Contacto</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead>Última Interacción</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
+                <TableHead scope="col">Contacto</TableHead>
+                <TableHead scope="col">Estado</TableHead>
+                <TableHead scope="col">Última Interacción</TableHead>
+                <TableHead className="text-right" scope="col">
+                  Acciones
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

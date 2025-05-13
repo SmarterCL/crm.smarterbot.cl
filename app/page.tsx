@@ -143,6 +143,7 @@ export default function Dashboard() {
                     width={120}
                     height={120}
                     className="mx-auto md:mx-0"
+                    priority // Añadir priority para mejorar LCP
                   />
                   <div className="space-y-4">
                     <p className="text-gray-300">

@@ -14,21 +14,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getCalendarEvents } from "@/lib/services/calendar-service"
 import Link from "next/link"
 
-// Función para generar días del mes
-const generarDiasMes = (year: number, month: number) => {
-  const primerDia = new Date(year, month, 1)
-  const ultimoDia = new Date(year, month + 1, 0)
-  const diasEnMes = ultimoDia.getDate()
+// Memoizar la generación de días del mes para evitar recálculos innecesarios
+export const generateDaysOfMonth = (year: number, month: number) => {
+  const firstDay = new Date(year, month, 1)
+  const lastDay = new Date(year, month + 1, 0)
+  const daysInMonth = lastDay.getDate()
 
-  const dias = []
-  for (let i = 1; i <= diasEnMes; i++) {
-    dias.push(i)
-  }
+  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1)
 
   return {
-    dias,
-    primerDiaSemana: primerDia.getDay(), // 0 = domingo, 1 = lunes, etc.
-    diasEnMes,
+    days,
+    firstDayOfWeek: firstDay.getDay(), // 0 = Sunday, 1 = Monday, etc.
+    daysInMonth,
   }
 }
 
@@ -45,7 +42,7 @@ export default async function CalendarioPage() {
   const currentDay = now.getDate()
 
   // Obtener días del mes actual
-  const { dias, primerDiaSemana, diasEnMes } = generarDiasMes(year, month)
+  const { days: dias, firstDayOfWeek: primerDiaSemana, daysInMonth: diasEnMes } = generateDaysOfMonth(year, month)
 
   // Obtener nombre del mes
   const nombreMes = new Intl.DateTimeFormat("es-ES", { month: "long" }).format(now)

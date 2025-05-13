@@ -10,11 +10,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createClient } from "@/lib/services/client-service"
-import { ArrowLeft, Save } from "lucide-react"
+import { ArrowLeft, Save, Loader2 } from "lucide-react"
 import Link from "next/link"
+import { useToast } from "@/hooks/use-toast"
 
 export default function NuevoClientePage() {
   const router = useRouter()
+  const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
@@ -22,18 +24,48 @@ export default function NuevoClientePage() {
     phone: "",
     status: "active",
   })
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+
+    // Limpiar error cuando el usuario corrige el campo
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev }
+        delete newErrors[name]
+        return newErrors
+      })
+    }
   }
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+
+    if (!formData.name.trim()) {
+      newErrors.name = "El nombre es obligatorio"
+    }
+
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "El formato del correo electrónico no es válido"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!validateForm()) {
+      return
+    }
+
     setIsLoading(true)
 
     try {
@@ -45,11 +77,20 @@ export default function NuevoClientePage() {
         last_interaction: null,
       })
 
+      toast({
+        title: "Cliente creado",
+        description: "El cliente ha sido creado exitosamente",
+      })
+
       router.push("/clientes")
       router.refresh()
     } catch (error) {
       console.error("Error al crear cliente:", error)
-      alert("Ocurrió un error al crear el cliente. Por favor, intenta de nuevo.")
+      toast({
+        title: "Error",
+        description: "Ocurrió un error al crear el cliente. Por favor, intenta de nuevo.",
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
     }
@@ -59,7 +100,7 @@ export default function NuevoClientePage() {
     <div className="flex-1 p-6">
       <div className="flex items-center mb-6">
         <Button variant="ghost" size="icon" asChild className="mr-2">
-          <Link href="/clientes">
+          <Link href="/clientes" aria-label="Volver a la lista de clientes">
             <ArrowLeft className="h-5 w-5" />
           </Link>
         </Button>
@@ -74,29 +115,46 @@ export default function NuevoClientePage() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Nombre completo *</Label>
+              <Label htmlFor="name" className={errors.name ? "text-red-400" : ""}>
+                Nombre completo *
+              </Label>
               <Input
                 id="name"
                 name="name"
                 placeholder="Nombre del cliente"
-                className="bg-[#0a1525] border-[#2a3a4b]"
+                className={`bg-[#0a1525] border-[#2a3a4b] ${errors.name ? "border-red-400" : ""}`}
                 value={formData.name}
                 onChange={handleChange}
-                required
+                aria-invalid={!!errors.name}
+                aria-describedby={errors.name ? "name-error" : undefined}
               />
+              {errors.name && (
+                <p id="name-error" className="text-sm text-red-400 mt-1">
+                  {errors.name}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Correo electrónico</Label>
+              <Label htmlFor="email" className={errors.email ? "text-red-400" : ""}>
+                Correo electrónico
+              </Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
                 placeholder="correo@ejemplo.com"
-                className="bg-[#0a1525] border-[#2a3a4b]"
+                className={`bg-[#0a1525] border-[#2a3a4b] ${errors.email ? "border-red-400" : ""}`}
                 value={formData.email}
                 onChange={handleChange}
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "email-error" : undefined}
               />
+              {errors.email && (
+                <p id="email-error" className="text-sm text-red-400 mt-1">
+                  {errors.email}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -114,7 +172,7 @@ export default function NuevoClientePage() {
             <div className="space-y-2">
               <Label htmlFor="status">Estado</Label>
               <Select defaultValue="active" onValueChange={(value) => handleSelectChange("status", value)}>
-                <SelectTrigger className="bg-[#0a1525] border-[#2a3a4b]">
+                <SelectTrigger id="status" className="bg-[#0a1525] border-[#2a3a4b]">
                   <SelectValue placeholder="Selecciona un estado" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#1e2a3b] border-[#2a3a4b]">
@@ -131,11 +189,14 @@ export default function NuevoClientePage() {
             </Button>
             <Button type="submit" disabled={isLoading} className="gap-2">
               {isLoading ? (
-                "Guardando..."
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  <span>Guardando...</span>
+                </>
               ) : (
                 <>
-                  <Save className="h-4 w-4" />
-                  Guardar Cliente
+                  <Save className="h-4 w-4" aria-hidden="true" />
+                  <span>Guardar Cliente</span>
                 </>
               )}
             </Button>

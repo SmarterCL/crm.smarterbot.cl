@@ -25,19 +25,25 @@ export type EventParticipant = {
 export async function getCalendarEvents(startDate: string, endDate: string): Promise<CalendarEvent[]> {
   const supabase = createServerSupabaseClient()
 
-  const { data, error } = await supabase
-    .from("calendar_events")
-    .select("*")
-    .gte("start_time", startDate)
-    .lte("end_time", endDate)
-    .order("start_time", { ascending: true })
+  try {
+    const { data, error } = await supabase
+      .from("calendar_events")
+      .select("*")
+      .gte("start_time", startDate)
+      .lte("end_time", endDate)
+      .order("start_time", { ascending: true })
 
-  if (error) {
-    console.error("Error fetching calendar events:", error)
-    throw error
+    if (error) {
+      console.error("Error fetching calendar events:", error)
+      throw new Error(`Error fetching calendar events: ${error.message}`)
+    }
+
+    return data || []
+  } catch (error) {
+    console.error("Unexpected error in getCalendarEvents:", error)
+    // En un entorno de producción, podríamos querer registrar este error en un servicio de monitoreo
+    return [] // Retornar array vacío en lugar de propagar el error
   }
-
-  return data || []
 }
 
 export async function getEventById(id: string): Promise<CalendarEvent | null> {

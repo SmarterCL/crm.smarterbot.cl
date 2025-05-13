@@ -14,14 +14,19 @@ export type Client = {
 export async function getClients(): Promise<Client[]> {
   const supabase = createServerSupabaseClient()
 
-  const { data, error } = await supabase.from("clients").select("*").order("created_at", { ascending: false })
+  try {
+    const { data, error } = await supabase.from("clients").select("*").order("created_at", { ascending: false })
 
-  if (error) {
-    console.error("Error fetching clients:", error)
-    throw error
+    if (error) {
+      console.error("Error fetching clients:", error)
+      throw new Error(`Error fetching clients: ${error.message}`)
+    }
+
+    return data || []
+  } catch (error) {
+    console.error("Unexpected error in getClients:", error)
+    return [] // Retornar array vacío en lugar de propagar el error
   }
-
-  return data || []
 }
 
 export async function getClientById(id: string): Promise<Client | null> {
