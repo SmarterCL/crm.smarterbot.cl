@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2 } from "lucide-react"
-import { createClientSupabaseClient } from "@/lib/supabase"
+import { supabaseBrowser } from "@/lib/supabase-browser"
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("")
@@ -21,7 +21,7 @@ export default function ResetPasswordPage() {
   const [success, setSuccess] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClientSupabaseClient()
+  const supabase = supabaseBrowser
 
   useEffect(() => {
     // Verificar si hay un hash en la URL (necesario para el flujo de restablecimiento de contraseña)
