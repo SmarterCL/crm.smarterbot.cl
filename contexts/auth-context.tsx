@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 import type { Session, User } from "@supabase/supabase-js"
-import { createClientSupabaseClient } from "@/lib/supabase"
+import { supabaseBrowser } from "@/lib/supabase-browser"
 import { useRouter } from "next/navigation"
 
 type AuthContextType = {
@@ -22,7 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
-  const supabase = createClientSupabaseClient()
+  const supabase = supabaseBrowser
 
   useEffect(() => {
     const getSession = async () => {
