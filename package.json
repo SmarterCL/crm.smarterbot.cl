@@ -1,7 +1,13 @@
 {
-  "name": "my-v0-project",
-  "version": "0.1.0",
+  "name": "chatwoot-frontend-smarteros",
+  "version": "2.10.1",
+  "description": "Custom frontend UI for Chatwoot messaging platform - SmarterOS",
   "private": true,
+  "author": "SmarterCL Team <dev@smarterbot.cl>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SmarterCL/chatwoot.smarterbot.cl"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
