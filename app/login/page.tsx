@@ -47,28 +47,25 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-[#0a1525] p-4"
-      style={{ backgroundImage: "url('/images/app-login-bg.png')", backgroundSize: "cover" }}
-    >
-      <Card className="w-full max-w-md bg-[#1e2a3b] border-[#2a3a4b]">
-        <CardHeader className="space-y-2 items-center text-center">
-          <div className="w-20 h-20 mb-2">
-            <Image src="/images/logo.png" alt="SmarterOS Logo" width={80} height={80} priority />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+      <Card className="w-full max-w-md bg-white border-gray-200 shadow-xl rounded-xl">
+        <CardHeader className="space-y-4 items-center text-center pt-8 pb-6">
+          <div className="w-24 h-24 mb-2">
+            <Image src="/images/logo.png" alt="SmarterOS Logo" width={96} height={96} priority />
           </div>
-          <CardTitle className="text-2xl">Iniciar Sesión</CardTitle>
-          <CardDescription className="text-gray-400">Ingresa tus credenciales para acceder a SmarterOS</CardDescription>
+          <CardTitle className="text-3xl font-semibold text-gray-800">Iniciar Sesión</CardTitle>
+          <CardDescription className="text-gray-600">Ingresa tus credenciales para acceder a SmarterOS</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-5 px-8">
             {error && (
-              <Alert className="bg-red-500/20 text-red-400 border-red-500/50">
+              <Alert className="bg-red-50 text-red-600 border-red-200">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Correo electrónico</Label>
+              <Label htmlFor="email" className="text-gray-700 font-medium">Correo electrónico</Label>
               <Input
                 id="email"
                 type="email"
@@ -76,14 +73,14 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-[#0a1525] border-[#2a3a4b]"
+                className="bg-white border-gray-300 focus:border-purple-500 focus:ring-purple-500 h-11"
               />
             </div>
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <Label htmlFor="password">Contraseña</Label>
-                <Link href="/forgot-password" className="text-sm text-blue-400 hover:underline">
+                <Label htmlFor="password" className="text-gray-700 font-medium">Contraseña</Label>
+                <Link href="/forgot-password" className="text-sm text-purple-600 hover:text-purple-700 hover:underline">
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
@@ -94,13 +91,17 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="bg-[#0a1525] border-[#2a3a4b]"
+                className="bg-white border-gray-300 focus:border-purple-500 focus:ring-purple-500 h-11"
               />
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isLoading}>
+          <CardFooter className="flex flex-col space-y-4 px-8 pb-8 pt-2">
+            <Button 
+              type="submit" 
+              className="w-full h-11 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors" 
+              disabled={isLoading}
+            >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -111,9 +112,9 @@ export default function LoginPage() {
               )}
             </Button>
 
-            <div className="text-center text-sm text-gray-400">
+            <div className="text-center text-sm text-gray-600">
               ¿No tienes una cuenta?{" "}
-              <Link href="/register" className="text-blue-400 hover:underline">
+              <Link href="/register" className="text-purple-600 hover:text-purple-700 hover:underline font-medium">
                 Regístrate
               </Link>
             </div>
