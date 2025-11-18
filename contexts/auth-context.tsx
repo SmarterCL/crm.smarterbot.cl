@@ -22,9 +22,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
-  const supabase = createClientSupabaseClient()
 
   useEffect(() => {
+    const supabase = createClientSupabaseClient()
+    
     const getSession = async () => {
       setIsLoading(true)
       try {
@@ -58,10 +59,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       subscription.unsubscribe()
     }
-  }, [router, supabase.auth])
+  }, [router])
 
   const signIn = async (email: string, password: string) => {
     try {
+      const supabase = createClientSupabaseClient()
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       return { error }
     } catch (error) {
@@ -72,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signUp = async (email: string, password: string) => {
     try {
+      const supabase = createClientSupabaseClient()
       const { data, error } = await supabase.auth.signUp({ email, password })
       return { data, error }
     } catch (error) {
@@ -82,6 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     try {
+      const supabase = createClientSupabaseClient()
       await supabase.auth.signOut()
       router.push("/login")
     } catch (error) {
@@ -91,6 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const resetPassword = async (email: string) => {
     try {
+      const supabase = createClientSupabaseClient()
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       })

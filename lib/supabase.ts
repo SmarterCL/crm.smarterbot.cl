@@ -1,6 +1,5 @@
 import { createClient } from "@supabase/supabase-js"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
-import { cookies } from "next/headers"
 
 // Creamos un cliente para el lado del servidor
 export const createServerSupabaseClient = () => {
@@ -19,8 +18,9 @@ export const createServerSupabaseClient = () => {
 }
 
 // Cliente para componentes de servidor
-export const createServerComponentSupabaseClient = () => {
-  const cookieStore = cookies()
+export const createServerComponentSupabaseClient = async () => {
+  const { cookies } = await import("next/headers")
+  const cookieStore = await cookies()
   return createServerComponentClient({ cookies: () => cookieStore })
 }
 
