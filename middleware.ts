@@ -4,6 +4,15 @@ import type { NextRequest } from "next/server"
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
+  
+  // Skip auth check in development when using placeholder Supabase config
+  // This allows local development without real Supabase credentials
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  const isPlaceholderConfig = !supabaseUrl.includes('.supabase.co') || supabaseUrl.includes('example')
+  if (process.env.NODE_ENV === 'development' && isPlaceholderConfig) {
+    return res
+  }
+
   const supabase = createMiddlewareClient({ req, res })
 
   const {

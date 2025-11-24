@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from "../supabase"
+import { createServerSupabaseClient } from "../supabase-server"
 
 export type CalendarEvent = {
   id: string

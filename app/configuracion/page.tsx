@@ -1,4 +1,4 @@
-import { Save, User, Bell, Lock, MessageSquare, CreditCard, Plus } from "lucide-react"
+import { Save, User, Bell, Lock, MessageSquare, CreditCard, Plus, Settings } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,42 +9,92 @@ import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
+import { AppLayout } from "@/components/app-layout"
 
 export default function ConfiguracionPage() {
   return (
-    <div className="flex-1 p-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Configuración</h1>
-          <p className="text-gray-400">Personaliza tu experiencia en SmarterOS</p>
+    <AppLayout>
+      <div className="flex-1 p-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">Configuración</h1>
+            <p className="text-gray-400">Personaliza tu experiencia en SmarterOS</p>
+          </div>
         </div>
-      </div>
 
-      <Tabs defaultValue="perfil" className="space-y-6">
-        <div className="flex overflow-auto pb-2">
-          <TabsList className="bg-[#1e2a3b] h-auto p-1 flex-wrap">
-            <TabsTrigger value="perfil" className="flex gap-2 data-[state=active]:bg-[#0a1525]">
-              <User className="h-4 w-4" />
-              <span>Perfil</span>
-            </TabsTrigger>
-            <TabsTrigger value="notificaciones" className="flex gap-2 data-[state=active]:bg-[#0a1525]">
-              <Bell className="h-4 w-4" />
-              <span>Notificaciones</span>
-            </TabsTrigger>
-            <TabsTrigger value="seguridad" className="flex gap-2 data-[state=active]:bg-[#0a1525]">
-              <Lock className="h-4 w-4" />
-              <span>Seguridad</span>
-            </TabsTrigger>
-            <TabsTrigger value="integraciones" className="flex gap-2 data-[state=active]:bg-[#0a1525]">
-              <MessageSquare className="h-4 w-4" />
-              <span>WhatsApp</span>
-            </TabsTrigger>
-            <TabsTrigger value="facturacion" className="flex gap-2 data-[state=active]:bg-[#0a1525]">
-              <CreditCard className="h-4 w-4" />
-              <span>Facturación</span>
-            </TabsTrigger>
-          </TabsList>
-        </div>
+        <Tabs defaultValue="general" className="space-y-6">
+          <div className="flex overflow-auto pb-2">
+            <TabsList className="bg-[#1e2a3b] h-auto p-1 flex-wrap">
+              <TabsTrigger value="general" className="flex gap-2 data-[state=active]:bg-[#0a1525]">
+                <Settings className="h-4 w-4" />
+                <span>General</span>
+              </TabsTrigger>
+              <TabsTrigger value="perfil" className="flex gap-2 data-[state=active]:bg-[#0a1525]">
+                <User className="h-4 w-4" />
+                <span>Perfil</span>
+              </TabsTrigger>
+              <TabsTrigger value="notificaciones" className="flex gap-2 data-[state=active]:bg-[#0a1525]">
+                <Bell className="h-4 w-4" />
+                <span>Notificaciones</span>
+              </TabsTrigger>
+              <TabsTrigger value="seguridad" className="flex gap-2 data-[state=active]:bg-[#0a1525]">
+                <Lock className="h-4 w-4" />
+                <span>Seguridad</span>
+              </TabsTrigger>
+              <TabsTrigger value="integraciones" className="flex gap-2 data-[state=active]:bg-[#0a1525]">
+                <MessageSquare className="h-4 w-4" />
+                <span>WhatsApp</span>
+              </TabsTrigger>
+              <TabsTrigger value="facturacion" className="flex gap-2 data-[state=active]:bg-[#0a1525]">
+                <CreditCard className="h-4 w-4" />
+                <span>Facturación</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
+
+          <TabsContent value="general" className="space-y-6">
+            <Card className="bg-[#1e2a3b] border-[#2a3a4b]">
+              <CardHeader>
+                <CardTitle className="text-lg">Configuración general</CardTitle>
+                <CardDescription className="text-gray-400">
+                  Personaliza tu experiencia
+                </CardDescription>
+              </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="business-name">Nombre del negocio</Label>
+                <Input
+                  id="business-name"
+                  placeholder="Ingresa el nombre de tu negocio"
+                  defaultValue="Mi Empresa"
+                  className="bg-[#0a1525] border-[#2a3a4b]"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="webhook-url">Webhook URL</Label>
+                <Input
+                  id="webhook-url"
+                  type="url"
+                  placeholder="https://tu-webhook.com/endpoint"
+                  defaultValue="https://mi-webhook.com/endpoint"
+                  className="bg-[#0a1525] border-[#2a3a4b]"
+                />
+                <p className="text-sm text-gray-400">
+                  URL donde se enviarán las notificaciones de eventos
+                </p>
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-end gap-2">
+              <Button variant="outline" className="border-[#2a3a4b]">
+                Cancelar
+              </Button>
+              <Button className="gap-2">
+                <Save className="h-4 w-4" />
+                Guardar cambios
+              </Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="perfil" className="space-y-6">
           <Card className="bg-[#1e2a3b] border-[#2a3a4b]">
@@ -300,6 +350,7 @@ export default function ConfiguracionPage() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </AppLayout>
   )
 }
