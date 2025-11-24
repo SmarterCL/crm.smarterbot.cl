@@ -6,8 +6,16 @@ import { createClient } from "@supabase/supabase-js"
 let clientSupabaseClient: ReturnType<typeof createClient> | null = null
 
 export const createClientSupabaseClient = () => {
+  // Allow SSR to pass without throwing
   if (typeof window === "undefined") {
-    throw new Error("createClientSupabaseClient debe ser llamado solo en el cliente")
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co"
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-key"
+    
+    return createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: false,
+      },
+    })
   }
 
   if (clientSupabaseClient) return clientSupabaseClient
