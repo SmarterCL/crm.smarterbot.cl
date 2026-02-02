@@ -1,6 +1,5 @@
 import { createClient } from "@supabase/supabase-js"
 import { createServerClient } from "@supabase/ssr"
-import { cookies } from "next/headers"
 
 // Cliente para el lado del servidor con Service Role Key (Admin)
 // Usado en API routes y servicios que necesitan bypass de RLS
@@ -21,6 +20,7 @@ export const createServerSupabaseClient = () => {
 
 // Cliente para componentes de servidor con cookies (Usa Anon Key y respeta RLS)
 export const createServerComponentSupabaseClient = async () => {
+  const { cookies } = await import("next/headers")
   const cookieStore = await cookies()
 
   return createServerClient(
