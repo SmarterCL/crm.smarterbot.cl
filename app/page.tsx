@@ -27,7 +27,7 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar"
 import { SidebarProvider } from "@/components/ui/sidebar"
-import { UserProfile } from "@/components/user-profile"
+import { UserProfileMenu } from "@/components/UserProfileMenu"
 
 export default function Dashboard() {
   return (
@@ -113,7 +113,7 @@ export default function Dashboard() {
                     3
                   </span>
                 </Button>
-                <UserProfile />
+                <UserProfileMenu />
               </div>
             </div>
           </header>
