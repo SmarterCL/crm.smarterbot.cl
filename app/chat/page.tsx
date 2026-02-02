@@ -15,6 +15,7 @@ import {
   Users,
   Plus,
   MessageSquare,
+  Loader2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -29,6 +30,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useAuth } from "@/contexts/auth-context"
 
 // Datos de ejemplo para chats
 const chats = [
@@ -133,6 +135,7 @@ const mensajes = [
 ]
 
 export default function ChatPage() {
+  const { user, isLoading } = useAuth()
   const [mensaje, setMensaje] = useState("")
   const [chatActivo, setChatActivo] = useState(1)
   const mensajesFinRef = useRef(null)
@@ -143,6 +146,23 @@ export default function ChatPage() {
       mensajesFinRef.current.scrollIntoView({ behavior: "smooth" })
     }
   }, [mensajes])
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0a1525]">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-blue-500 mx-auto mb-4" />
+          <p className="text-gray-400">Cargando...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Don't render chat if not authenticated
+  if (!user) {
+    return null
+  }
 
   const handleEnviarMensaje = () => {
     if (mensaje.trim() === "") return
@@ -315,15 +335,13 @@ export default function ChatPage() {
               {mensajes.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.remitente === "yo" ? "justify-end" : "justify-start"}`}>
                   <div
-                    className={`max-w-[70%] rounded-lg p-3 ${
-                      msg.remitente === "yo" ? "bg-blue-600 text-white rounded-br-none" : "bg-[#1e2a3b] rounded-bl-none"
-                    }`}
+                    className={`max-w-[70%] rounded-lg p-3 ${msg.remitente === "yo" ? "bg-blue-600 text-white rounded-br-none" : "bg-[#1e2a3b] rounded-bl-none"
+                      }`}
                   >
                     <p>{msg.texto}</p>
                     <div
-                      className={`flex items-center justify-end gap-1 mt-1 text-xs ${
-                        msg.remitente === "yo" ? "text-blue-200" : "text-gray-400"
-                      }`}
+                      className={`flex items-center justify-end gap-1 mt-1 text-xs ${msg.remitente === "yo" ? "text-blue-200" : "text-gray-400"
+                        }`}
                     >
                       <span>{msg.hora}</span>
                       {msg.remitente === "yo" &&

@@ -10,6 +10,7 @@ type AuthContextType = {
   session: Session | null
   isLoading: boolean
   signIn: (email: string, password: string) => Promise<{ error: any }>
+  signInWithGoogle: () => Promise<{ error: any }>
   signUp: (email: string, password: string) => Promise<{ error: any; data: any }>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<{ error: any }>
@@ -49,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: string, session: Session | null) => {
       setSession(session)
       setUser(session?.user || null)
       router.refresh()
@@ -66,6 +67,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error }
     } catch (error) {
       console.error("Error signing in:", error)
+      return { error }
+    }
+  }
+
+  const signInWithGoogle = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        },
+      })
+      return { error }
+    } catch (error) {
+      console.error("Error signing in with Google:", error)
       return { error }
     }
   }
@@ -106,6 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session,
     isLoading,
     signIn,
+    signInWithGoogle,
     signUp,
     signOut,
     resetPassword,
