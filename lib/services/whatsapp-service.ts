@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from "../supabase"
+import { createServerSupabaseClient } from "@/lib/supabase"
 
 export type WhatsAppMessage = {
   id: string
@@ -10,7 +10,11 @@ export type WhatsAppMessage = {
   created_at: string
 }
 
-export async function getWhatsAppMessages(limit = 10): Promise<WhatsAppMessage[]> {
+export type WhatsAppMessageWithClient = WhatsAppMessage & {
+  clients: { name: string } | null
+}
+
+export async function getWhatsAppMessages(limit = 10): Promise<WhatsAppMessageWithClient[]> {
   const supabase = createServerSupabaseClient()
 
   const { data, error } = await supabase

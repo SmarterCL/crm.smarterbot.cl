@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from "../supabase"
+import { createServerSupabaseClient } from "@/lib/supabase"
 
 export type CalendarEvent = {
   id: string
@@ -20,6 +20,10 @@ export type EventParticipant = {
   name: string | null
   status: string
   created_at: string
+}
+
+export type EventParticipantWithClient = EventParticipant & {
+  clients: { name: string; email: string | null } | null
 }
 
 export async function getCalendarEvents(startDate: string, endDate: string): Promise<CalendarEvent[]> {
@@ -106,7 +110,7 @@ export async function deleteCalendarEvent(id: string): Promise<void> {
   }
 }
 
-export async function getEventParticipants(eventId: string): Promise<EventParticipant[]> {
+export async function getEventParticipants(eventId: string): Promise<EventParticipantWithClient[]> {
   const supabase = createServerSupabaseClient()
 
   const { data, error } = await supabase

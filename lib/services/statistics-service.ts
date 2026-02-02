@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from "../supabase"
+import { createServerSupabaseClient } from "@/lib/supabase"
 
 export type Statistic = {
   id: string
