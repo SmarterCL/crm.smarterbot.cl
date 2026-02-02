@@ -6,8 +6,10 @@ import { AuthProvider } from "@/contexts/auth-context"
 export const metadata = {
   title: "SmarterOS Hub",
   description: "Dashboard inteligente para SmarterOS",
-    generator: 'v0.dev'
+  generator: 'v0.dev'
 }
+
+import { Analytics } from "@vercel/analytics/react"
 
 export default function RootLayout({
   children,
@@ -20,6 +22,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   )
