@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2 } from "lucide-react"
-import { createClientSupabaseClient } from "@/lib/supabase"
+import { createClientSupabaseClient } from "@/lib/supabase-client"
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("")
@@ -20,10 +20,14 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [supabase, setSupabase] = useState<ReturnType<typeof createClientSupabaseClient>>(null)
   const router = useRouter()
-  const supabase = createClientSupabaseClient()
 
   useEffect(() => {
+    // Inicializar supabase solo en el cliente
+    const client = createClientSupabaseClient()
+    setSupabase(client)
+
     // Verificar si hay un hash en la URL (necesario para el flujo de restablecimiento de contraseña)
     const hashParams = new URLSearchParams(window.location.hash.substring(1))
     if (!hashParams.get("access_token")) {
@@ -45,6 +49,11 @@ export default function ResetPasswordPage() {
     }
 
     try {
+      if (!supabase) {
+        setError("Error de inicialización. Por favor, recarga la página.")
+        return
+      }
+
       const { error } = await supabase.auth.updateUser({ password })
 
       if (error) {

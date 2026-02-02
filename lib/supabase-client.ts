@@ -6,8 +6,10 @@ import { createBrowserClient } from "@supabase/ssr"
 let clientSupabaseClient: ReturnType<typeof createBrowserClient> | null = null
 
 export const createClientSupabaseClient = () => {
+  // Durante SSR, retornar null en lugar de lanzar error
+  // Esto permite que el módulo se importe de forma segura
   if (typeof window === "undefined") {
-    throw new Error("createClientSupabaseClient debe ser llamado solo en el cliente")
+    return null as any
   }
 
   if (clientSupabaseClient) return clientSupabaseClient
