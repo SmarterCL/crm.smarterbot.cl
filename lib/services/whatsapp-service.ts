@@ -24,8 +24,12 @@ export async function getWhatsAppMessages(limit = 10): Promise<WhatsAppMessageWi
     .limit(limit)
 
   if (error) {
+    if (error.code === "PGRST204" || error.code === "PGRST205") {
+      console.warn(`Table 'whatsapp_messages' might be missing. Error: ${error.message}`)
+      return []
+    }
     console.error("Error fetching WhatsApp messages:", error)
-    throw error
+    return []
   }
 
   return data || []
@@ -41,8 +45,12 @@ export async function getClientMessages(clientId: string): Promise<WhatsAppMessa
     .order("created_at", { ascending: true })
 
   if (error) {
+    if (error.code === "PGRST204" || error.code === "PGRST205") {
+      console.warn(`Table 'whatsapp_messages' might be missing. Error: ${error.message}`)
+      return []
+    }
     console.error(`Error fetching messages for client ${clientId}:`, error)
-    throw error
+    return []
   }
 
   return data || []

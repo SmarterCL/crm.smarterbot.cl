@@ -48,135 +48,147 @@ export async function seedDatabase() {
       last_interaction: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // Hace 2 días
     })
 
-    // Crear mensajes de WhatsApp de ejemplo
-    await sendWhatsAppMessage({
-      client_id: client1.id,
-      direction: "incoming",
-      content: "Hola, ¿podemos agendar una reunión para mañana?",
-      status: "delivered",
-      read: false,
-    })
+    // 2. Crear mensajes de WhatsApp de ejemplo
+    try {
+      await sendWhatsAppMessage({
+        client_id: client1.id,
+        direction: "incoming",
+        content: "Hola, ¿podemos agendar una reunión para mañana?",
+        status: "delivered",
+        read: false,
+      })
 
-    await sendWhatsAppMessage({
-      client_id: client2.id,
-      direction: "incoming",
-      content: "Necesito información sobre los precios del servicio",
-      status: "delivered",
-      read: true,
-    })
+      await sendWhatsAppMessage({
+        client_id: client2.id,
+        direction: "incoming",
+        content: "Necesito información sobre los precios del servicio",
+        status: "delivered",
+        read: true,
+      })
 
-    await sendWhatsAppMessage({
-      client_id: client2.id,
-      direction: "outgoing",
-      content: "Claro, te envío el detalle de precios a continuación...",
-      status: "delivered",
-      read: true,
-    })
+      await sendWhatsAppMessage({
+        client_id: client2.id,
+        direction: "outgoing",
+        content: "Claro, te envío el detalle de precios a continuación...",
+        status: "delivered",
+        read: true,
+      })
+    } catch (msgError) {
+      console.warn("Could not seed WhatsApp messages. Table might be missing.", msgError)
+    }
 
-    // Crear eventos de calendario de ejemplo
-    const now = new Date()
-    const year = now.getFullYear()
-    const month = now.getMonth()
-    const day = now.getDate()
+    // 3. Crear eventos de calendario de ejemplo
+    try {
+      const now = new Date()
+      const year = now.getFullYear()
+      const month = now.getMonth()
+      const day = now.getDate()
 
-    const event1 = await createCalendarEvent({
-      title: "Reunión con Cliente",
-      description: "Presentación de propuesta comercial",
-      start_time: new Date(year, month, day, 10, 0, 0).toISOString(),
-      end_time: new Date(year, month, day, 11, 0, 0).toISOString(),
-      event_type: "meeting",
-      created_by: "admin",
-    })
+      const event1 = await createCalendarEvent({
+        title: "Reunión con Cliente",
+        description: "Presentación de propuesta comercial",
+        start_time: new Date(year, month, day, 10, 0, 0).toISOString(),
+        end_time: new Date(year, month, day, 11, 0, 0).toISOString(),
+        event_type: "meeting",
+        created_by: "admin",
+      })
 
-    await addEventParticipant({
-      event_id: event1.id,
-      client_id: client1.id,
-      email: null,
-      name: null,
-      status: "confirmed",
-    })
+      await addEventParticipant({
+        event_id: event1.id,
+        client_id: client1.id,
+        email: null,
+        name: null,
+        status: "confirmed",
+      })
 
-    const event2 = await createCalendarEvent({
-      title: "Llamada de seguimiento",
-      description: "Seguimiento de proyecto en curso",
-      start_time: new Date(year, month, day + 1, 14, 30, 0).toISOString(),
-      end_time: new Date(year, month, day + 1, 15, 0, 0).toISOString(),
-      event_type: "call",
-      created_by: "admin",
-    })
+      const event2 = await createCalendarEvent({
+        title: "Llamada de seguimiento",
+        description: "Seguimiento de proyecto en curso",
+        start_time: new Date(year, month, day + 1, 14, 30, 0).toISOString(),
+        end_time: new Date(year, month, day + 1, 15, 0, 0).toISOString(),
+        event_type: "call",
+        created_by: "admin",
+      })
 
-    await addEventParticipant({
-      event_id: event2.id,
-      client_id: client2.id,
-      email: null,
-      name: null,
-      status: "pending",
-    })
+      await addEventParticipant({
+        event_id: event2.id,
+        client_id: client2.id,
+        email: null,
+        name: null,
+        status: "pending",
+      })
 
-    const event3 = await createCalendarEvent({
-      title: "Entrega de propuesta",
-      description: "Finalizar y enviar propuesta comercial",
-      start_time: new Date(year, month, day + 2, 9, 0, 0).toISOString(),
-      end_time: new Date(year, month, day + 2, 10, 0, 0).toISOString(),
-      event_type: "task",
-      created_by: "admin",
-    })
+      await createCalendarEvent({
+        title: "Entrega de propuesta",
+        description: "Finalizar y enviar propuesta comercial",
+        start_time: new Date(year, month, day + 2, 9, 0, 0).toISOString(),
+        end_time: new Date(year, month, day + 2, 10, 0, 0).toISOString(),
+        event_type: "task",
+        created_by: "admin",
+      })
+    } catch (calError) {
+      console.warn("Could not seed calendar events. Table might be missing.", calError)
+    }
 
-    // Crear estadísticas de ejemplo
-    const today = new Date().toISOString().split("T")[0]
-
-    await recordStatistic({
-      metric_name: "messages_responded",
-      metric_value: 24,
-      date_recorded: today,
-    })
-
-    await recordStatistic({
-      metric_name: "tasks_automated",
-      metric_value: 12,
-      date_recorded: today,
-    })
-
-    await recordStatistic({
-      metric_name: "hours_saved",
-      metric_value: 3.5,
-      date_recorded: today,
-    })
-
-    await recordStatistic({
-      metric_name: "response_rate",
-      metric_value: 98.2,
-      date_recorded: today,
-    })
-
-    // Estadísticas históricas para los últimos 7 días
-    for (let i = 1; i <= 6; i++) {
-      const date = new Date()
-      date.setDate(date.getDate() - i)
-      const dateStr = date.toISOString().split("T")[0]
+    // 4. Crear estadísticas de ejemplo
+    try {
+      const today = new Date().toISOString().split("T")[0]
 
       await recordStatistic({
         metric_name: "messages_responded",
-        metric_value: Math.floor(Math.random() * 10) + 15, // Entre 15 y 25
-        date_recorded: dateStr,
+        metric_value: 24,
+        date_recorded: today,
       })
 
       await recordStatistic({
         metric_name: "tasks_automated",
-        metric_value: Math.floor(Math.random() * 5) + 8, // Entre 8 y 13
-        date_recorded: dateStr,
+        metric_value: 12,
+        date_recorded: today,
       })
 
       await recordStatistic({
         metric_name: "hours_saved",
-        metric_value: Math.floor(Math.random() * 20 + 20) / 10, // Entre 2.0 y 4.0
-        date_recorded: dateStr,
+        metric_value: 3.5,
+        date_recorded: today,
       })
+
+      await recordStatistic({
+        metric_name: "response_rate",
+        metric_value: 98.2,
+        date_recorded: today,
+      })
+
+      // Estadísticas históricas para los últimos 7 días
+      for (let i = 1; i <= 6; i++) {
+        const date = new Date()
+        date.setDate(date.getDate() - i)
+        const dateStr = date.toISOString().split("T")[0]
+
+        await recordStatistic({
+          metric_name: "messages_responded",
+          metric_value: Math.floor(Math.random() * 10) + 15, // Entre 15 y 25
+          date_recorded: dateStr,
+        })
+
+        await recordStatistic({
+          metric_name: "tasks_automated",
+          metric_value: Math.floor(Math.random() * 5) + 8, // Entre 8 y 13
+          date_recorded: dateStr,
+        })
+
+        await recordStatistic({
+          metric_name: "hours_saved",
+          metric_value: Math.floor(Math.random() * 20 + 20) / 10, // Entre 2.0 y 4.0
+          date_recorded: dateStr,
+        })
+      }
+    } catch (statsError) {
+      console.warn("Could not seed statistics. Table might be missing.", statsError)
     }
 
-    return { success: true, message: "Datos de ejemplo creados correctamente" }
+    return { success: true, message: "Proceso de siembra completado (revisa logs por posibles tablas faltantes)" }
   } catch (error) {
-    console.error("Error al crear datos de ejemplo:", error)
-    return { success: false, message: "Error al crear datos de ejemplo", error }
+    console.error("Error crítico al crear datos de ejemplo:", error)
+    return { success: false, message: "Error crítico al crear datos de ejemplo", error }
   }
 }

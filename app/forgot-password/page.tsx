@@ -44,22 +44,28 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-[#0a1525] p-4"
-      style={{ backgroundImage: "url('/images/app-login-bg.png')", backgroundSize: "cover" }}
-    >
-      <Card className="w-full max-w-md bg-[#1e2a3b] border-[#2a3a4b]">
+    <div className="min-h-screen flex items-center justify-center relative bg-[#0a1525] p-4">
+      {/* Background with overlay and blur */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/app-login-bg.png')" }}
+      />
+      <div className="absolute inset-0 bg-[#0a1525]/70 backdrop-blur-sm" />
+
+      <Card className="w-full max-w-md bg-[#1e2a3b]/50 backdrop-blur-xl border-[#2a3a4b] shadow-2xl relative z-10">
         <CardHeader className="space-y-2 items-center text-center">
           <div className="w-20 h-20 mb-2">
             <Image src="/images/logo.png" alt="SmarterOS Logo" width={80} height={80} priority />
           </div>
-          <CardTitle className="text-2xl">Recuperar Contraseña</CardTitle>
+          <CardTitle className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+            Recuperar Contraseña
+          </CardTitle>
           <CardDescription className="text-gray-400">
             Ingresa tu correo electrónico para recibir un enlace de recuperación
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             {error && (
               <Alert className="bg-red-500/20 text-red-400 border-red-500/50">
                 <AlertDescription>{error}</AlertDescription>
@@ -73,7 +79,7 @@ export default function ForgotPasswordPage() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Correo electrónico</Label>
+              <Label htmlFor="email" className="text-gray-300">Correo electrónico</Label>
               <Input
                 id="email"
                 type="email"
@@ -81,14 +87,18 @@ export default function ForgotPasswordPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-[#0a1525] border-[#2a3a4b]"
+                className="bg-[#0a1525]/50 border-[#2a3a4b] focus:ring-blue-500/50 transition-all text-white"
                 disabled={!!success}
               />
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isLoading || !!success}>
+          <CardFooter className="flex flex-col space-y-4 pt-6">
+            <Button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-6 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+              disabled={isLoading || !!success}
+            >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -99,7 +109,7 @@ export default function ForgotPasswordPage() {
               )}
             </Button>
 
-            <Button variant="ghost" className="w-full" asChild>
+            <Button variant="ghost" className="w-full text-gray-400 hover:text-white hover:bg-[#2a3a4b]/50 transition-all" asChild>
               <Link href="/login">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Volver a Iniciar Sesión

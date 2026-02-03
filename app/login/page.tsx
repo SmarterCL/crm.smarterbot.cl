@@ -67,110 +67,130 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-[#0a1525] p-4"
-      style={{ backgroundImage: "url('/images/app-login-bg.png')", backgroundSize: "cover" }}
-    >
-      <Card className="w-full max-w-md bg-[#1e2a3b] border-[#2a3a4b]">
-        <CardHeader className="space-y-2 items-center text-center">
-          <div className="w-20 h-20 mb-2">
-            <Image src="/images/logo.png" alt="SmarterOS Logo" width={80} height={80} priority />
-          </div>
-          <CardTitle className="text-2xl">Iniciar Sesión</CardTitle>
-          <CardDescription className="text-gray-400">Ingresa tus credenciales para acceder a SmarterOS</CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            {error && (
-              <Alert className="bg-red-500/20 text-red-400 border-red-500/50">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+    <div className="min-h-screen flex flex-col lg:flex-row bg-[#0a1525]">
+      {/* Left side: Background Image and Branding */}
+      <div
+        className="hidden lg:flex lg:w-1/2 relative items-center justify-center bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/app-login-bg.png')" }}
+      >
+        <div className="absolute inset-0 bg-[#0a1525]/60 backdrop-blur-sm" />
+        <div className="relative z-10 text-center p-12">
+          <Image src="/images/logo.png" alt="SmarterOS Logo" width={160} height={160} className="mx-auto mb-8 animate-pulse" priority />
+          <h2 className="text-4xl font-bold text-white mb-4">SmarterOS Hub</h2>
+          <p className="text-xl text-gray-300 max-w-md mx-auto">
+            Gestiona tu negocio de manera inteligente con nuestra plataforma de CRM y automatización.
+          </p>
+        </div>
+      </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Correo electrónico</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="tu@ejemplo.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="bg-[#0a1525] border-[#2a3a4b]"
-              />
+      {/* Right side: Login Form */}
+      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 background-animate bg-gradient-to-br from-[#0a1525] via-[#112240] to-[#0a1525]">
+        <Card className="w-full max-w-md bg-[#1e2a3b]/50 backdrop-blur-xl border-[#2a3a4b] shadow-2xl">
+          <CardHeader className="space-y-2 items-center text-center">
+            <div className="lg:hidden w-20 h-20 mb-2">
+              <Image src="/images/logo.png" alt="SmarterOS Logo" width={80} height={80} priority />
             </div>
+            <CardTitle className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+              Bienvenido
+            </CardTitle>
+            <CardDescription className="text-gray-400">
+              Ingresa tus credenciales para acceder a SmarterOS
+            </CardDescription>
+          </CardHeader>
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-6">
+              {error && (
+                <Alert className="bg-red-500/20 text-red-400 border-red-500/50">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
 
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="password">Contraseña</Label>
-                <Link href="/forgot-password" className="text-sm text-blue-400 hover:underline">
-                  ¿Olvidaste tu contraseña?
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-gray-300">Correo electrónico</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="tu@ejemplo.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="bg-[#0a1525]/50 border-[#2a3a4b] focus:ring-blue-500/50 transition-all"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="password" name="password-label" className="text-gray-300">Contraseña</Label>
+                  <Link href="/forgot-password" name="forgot-password-link" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                    ¿Olvidaste tu contraseña?
+                  </Link>
+                </div>
+                <Input
+                  id="password"
+                  name="password-input"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="bg-[#0a1525]/50 border-[#2a3a4b] focus:ring-blue-500/50 transition-all"
+                />
+              </div>
+            </CardContent>
+
+            <CardFooter className="flex flex-col space-y-4 pt-6">
+              <Button type="submit" name="login-button" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-6 transition-all transform hover:scale-[1.02] active:scale-[0.98]" disabled={isLoading || isGoogleLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Iniciando sesión...
+                  </>
+                ) : (
+                  "Iniciar Sesión"
+                )}
+              </Button>
+
+              <div className="relative w-full">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-[#2a3a4b]" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-[#1e2a3b] px-4 text-gray-500 font-medium">O continúa con</span>
+                </div>
+              </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full border-[#2a3a4b] bg-white hover:bg-gray-100 text-gray-900 font-medium py-6 transition-all"
+                onClick={handleGoogleSignIn}
+                disabled={isLoading || isGoogleLoading}
+              >
+                {isGoogleLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Conectando...
+                  </>
+                ) : (
+                  <>
+                    <svg className="mr-2 h-5 w-5" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+                      <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
+                    </svg>
+                    Google
+                  </>
+                )}
+              </Button>
+
+              <div className="text-center text-sm text-gray-400 pt-4">
+                ¿No tienes una cuenta?{" "}
+                <Link href="/register" className="text-blue-400 hover:text-blue-300 font-semibold transition-colors">
+                  Regístrate
                 </Link>
               </div>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="bg-[#0a1525] border-[#2a3a4b]"
-              />
-            </div>
-          </CardContent>
-
-          <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Iniciando sesión...
-                </>
-              ) : (
-                "Iniciar Sesión"
-              )}
-            </Button>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-[#2a3a4b]" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-[#1e2a3b] px-2 text-gray-400">O continúa con</span>
-              </div>
-            </div>
-
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full border-[#2a3a4b] bg-white text-gray-900 hover:bg-gray-100"
-              onClick={handleGoogleSignIn}
-              disabled={isLoading || isGoogleLoading}
-            >
-              {isGoogleLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Conectando con Google...
-                </>
-              ) : (
-                <>
-                  <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
-                    <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
-                  </svg>
-                  Google
-                </>
-              )}
-            </Button>
-
-            <div className="text-center text-sm text-gray-400">
-              ¿No tienes una cuenta?{" "}
-              <Link href="/register" className="text-blue-400 hover:underline">
-                Regístrate
-              </Link>
-            </div>
-          </CardFooter>
-        </form>
-      </Card>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
     </div>
   )
 }

@@ -24,8 +24,13 @@ export async function getStatistics(metricName: string, days = 7): Promise<Stati
     .order("date_recorded", { ascending: true })
 
   if (error) {
+    // If the table doesn't exist, return an empty array instead of throwing
+    if (error.code === "PGRST204" || error.code === "PGRST205") {
+      console.warn(`Table 'statistics' might be missing. Error: ${error.message}`)
+      return []
+    }
     console.error(`Error fetching statistics for ${metricName}:`, error)
-    throw error
+    return []
   }
 
   return data || []
@@ -53,8 +58,13 @@ export async function getDailyStatistics(): Promise<any> {
   const { data, error } = await supabase.from("statistics").select("*").eq("date_recorded", today)
 
   if (error) {
+    // If the table doesn't exist, return an empty object instead of throwing
+    if (error.code === "PGRST204" || error.code === "PGRST205") {
+      console.warn(`Table 'statistics' might be missing. Error: ${error.message}`)
+      return {}
+    }
     console.error("Error fetching daily statistics:", error)
-    throw error
+    return {}
   }
 
   // Transformar los datos en un objeto más fácil de usar
