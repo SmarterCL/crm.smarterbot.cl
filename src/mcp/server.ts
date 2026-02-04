@@ -42,7 +42,7 @@ class SmarterBOTMCPServer {
         const tools = await specLoader.loadTools();
         
         return {
-          tools: tools.map(tool => ({
+          tools: tools.map((tool: { name: string; handler?: string; description: string; parameters: any }) => ({
             name: tool.name,
             description: tool.description,
             inputSchema: tool.parameters
