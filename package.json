@@ -1,6 +1,6 @@
 {
   "name": "chatwoot-frontend-smarteros",
-  "version": "2.10.1",
+  "version": "2.11.0",
   "description": "Custom frontend UI for Chatwoot messaging platform - SmarterOS",
   "private": true,
   "author": "SmarterCL Team <dev@smarterbot.cl>",
@@ -8,11 +8,27 @@
     "type": "git",
     "url": "https://github.com/SmarterCL/chatwoot.smarterbot.cl"
   },
+  "engines": {
+    "node": ">=20.11.0",
+    "npm": ">=10.0.0", 
+    "pnpm": ">=8.15.0"
+  },
+  "volta": {
+    "node": "22.11.0",
+    "npm": "10.9.0",
+    "pnpm": "9.15.4"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "typecheck": "tsc --noEmit",
+    "typecheck:strict": "tsc --noEmit --strict",
+    "security-check": "npm audit --audit-level=moderate",
+    "build:production": "npm run typecheck && npm run lint && npm run build",
+    "precommit": "npm run typecheck && npm run lint"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -43,17 +59,17 @@
     "@radix-ui/react-toggle": "1.1.1",
     "@radix-ui/react-toggle-group": "1.1.1",
     "@radix-ui/react-tooltip": "1.1.6",
-    "@supabase/ssr": "^0.8.0",
-    "@supabase/supabase-js": "latest",
+    "@supabase/ssr": "^0.10.0",
+    "@supabase/supabase-js": "^2.47.7",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
-    "date-fns": "4.1.0",
-    "embla-carousel-react": "8.5.1",
-    "input-otp": "1.4.1",
-    "lucide-react": "^0.454.0",
-    "next": "16.1.6",
+    "date-fns": "^4.1.0",
+    "embla-carousel-react": "^8.5.2",
+    "input-otp": "^1.4.2",
+    "lucide-react": "^0.460.0",
+    "next": "^16.1.6",
     "next-themes": "^0.4.4",
     "react": "^19",
     "react-day-picker": "8.10.1",
@@ -69,11 +85,15 @@
     "@vercel/analytics": "latest"
   },
   "devDependencies": {
-    "@types/node": "^22",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "postcss": "^8",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "postcss": "^8.5.1",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5"
+    "typescript": "^5.7.3",
+    "eslint": "^9.17.0",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "@modelcontextprotocol/sdk": "^1.0.0"
   }
 }

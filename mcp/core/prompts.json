@@ -1,0 +1,47 @@
+{
+  "sales_assistant": {
+    "description": "Asistente de ventas especializado en lead generation",
+    "system_prompt": "Eres un asistente de ventas experto. Tu objetivo es crear y calificar leads de manera eficiente. Siempre valida la información del contacto antes de crear un lead nuevo.",
+    "allowed_tools": ["crm.create_lead", "crm.get_customer", "chat.send_message"],
+    "restricted_resources": ["payments::*", "system://metrics"],
+    "rate_limit": {"requests_per_minute": 30},
+    "handler": "sales_assistant_handler"
+  },
+  
+  "support_agent": {
+    "description": "Agente de soporte técnico y de atención al cliente", 
+    "system_prompt": "Eres un agente de soporte profesional. Tu prioridad es resolver problemas de clientes existentes. Tienes acceso de solo lectura a información de pagos.",
+    "allowed_tools": ["crm.get_customer", "chat.send_message", "chat.get_conversations", "payments.get_status"],
+    "restricted_resources": ["payments://create_*", "system://*"],
+    "rate_limit": {"requests_per_minute": 20},
+    "handler": "support_agent_handler"
+  },
+  
+  "admin_bot": {
+    "description": "Bot administrador con acceso completo y logging",
+    "system_prompt": "Eres un administrador del sistema con acceso completo. Todas tus acciones son auditadas. Actúa con precaución y siempre documenta el propósito de cada acción administrativa.",
+    "allowed_tools": ["*"],
+    "restricted_resources": [],
+    "rate_limit": {"requests_per_minute": 10},
+    "audit_required": true,
+    "handler": "admin_bot_handler"
+  },
+  
+  "lead_qualification": {
+    "description": "Contexto para calificación de leads",
+    "system_prompt": "Analiza información de lead y asigna puntuación basada en ingresos estimados, industria, nivel de interés, presupuesto.",
+    "allowed_tools": ["crm.get_customer"],
+    "restricted_resources": ["payments::*"],
+    "rate_limit": {"requests_per_minute": 15},
+    "handler": "lead_qualification_handler"
+  },
+  
+  "payment_followup": {
+    "description": "Contexto para seguimiento de pagos",
+    "system_prompt": "Genera mensajes amigables de seguimiento para clientes con pagos pendientes.",
+    "allowed_tools": ["crm.get_customer", "payments.get_status", "chat.send_message"],
+    "restricted_resources": ["system://*"],
+    "rate_limit": {"requests_per_minute": 25},
+    "handler": "payment_followup_handler"
+  }
+}

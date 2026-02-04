@@ -1,0 +1,110 @@
+{
+  "crm.create_lead": {
+    "handler": "odoo_create_lead",
+    "description": "Crea un nuevo lead en el sistema CRM",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string", "description": "Nombre completo del lead"},
+        "email": {"type": "string", "format": "email", "description": "Email del lead"},
+        "phone": {"type": "string", "description": "Teléfono del lead"},
+        "source": {"type": "string", "enum": ["web", "whatsapp", "manual", "api"], "description": "Fuente del lead"},
+        "notes": {"type": "string", "description": "Notas adicionales"},
+        "assigned_to": {"type": "string", "description": "ID del agente asignado"}
+      },
+      "required": ["name", "email"]
+    }
+  },
+  
+  "crm.get_customer": {
+    "handler": "supabase_get_customer",
+    "description": "Obtiene información de un cliente existente",
+    "parameters": {
+      "type": "object", 
+      "properties": {
+        "customer_id": {"type": "string", "description": "ID único del cliente"},
+        "include_conversations": {"type": "boolean", "default": false}
+      },
+      "required": ["customer_id"]
+    }
+  },
+  
+  "crm.update_customer": {
+    "handler": "odoo_update_customer",
+    "description": "Actualiza información de un cliente",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "customer_id": {"type": "string"},
+        "updates": {
+          "type": "object",
+          "properties": {
+            "name": {"type": "string"},
+            "email": {"type": "string", "format": "email"},
+            "phone": {"type": "string"},
+            "status": {"type": "string", "enum": ["active", "inactive", "pending"]}
+          }
+        }
+      },
+      "required": ["customer_id", "updates"]
+    }
+  },
+  
+  "chat.send_message": {
+    "handler": "chatwoot_send_message",
+    "description": "Envía un mensaje a través del canal especificado",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "conversation_id": {"type": "string", "description": "ID de la conversación"},
+        "message": {"type": "string", "description": "Contenido del mensaje"},
+        "channel": {"type": "string", "enum": ["whatsapp", "webchat", "email"], "description": "Canal de envío"},
+        "template_id": {"type": "string", "description": "ID de plantilla (opcional)"}
+      },
+      "required": ["conversation_id", "message", "channel"]
+    }
+  },
+  
+  "chat.get_conversations": {
+    "handler": "chatwoot_get_conversations",
+    "description": "Obtiene lista de conversaciones con filtros",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string", "enum": ["open", "resolved", "pending"]},
+        "channel": {"type": "string", "enum": ["whatsapp", "webchat"]},
+        "assigned_to": {"type": "string"},
+        "limit": {"type": "integer", "default": 50}
+      }
+    }
+  },
+  
+  "payments.create_intent": {
+    "handler": "flow_create_payment_intent",
+    "description": "Crea una intención de pago para un cliente",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "customer_id": {"type": "string"},
+        "amount": {"type": "number", "minimum": 0},
+        "currency": {"type": "string", "default": "CLP"},
+        "description": {"type": "string", "description": "Descripción del pago"},
+        "metadata": {"type": "object", "description": "Metadatos adicionales"}
+      },
+      "required": ["customer_id", "amount", "description"]
+    }
+  },
+  
+  "payments.get_status": {
+    "handler": "flow_get_payment_status",
+    "description": "Consulta el estado de un pago",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "payment_id": {"type": "string"},
+        "customer_id": {"type": "string"}
+      },
+      "required": ["payment_id"]
+    }
+  }
+}

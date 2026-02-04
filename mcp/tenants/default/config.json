@@ -1,0 +1,38 @@
+{
+  "validation_rules": {
+    "email_validation": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+    "phone_validation": "^\\+?[1-9]\\d{1,14}$",
+    "rut_validation": "^[0-9]{7,8}-[0-9Kk]$", 
+    "max_message_length": 1000,
+    "max_amount_per_payment": 1000000,
+    "rate_limit_per_ip": {"requests": 100, "window": "1m"}
+  },
+  "tenant_rules": {
+    "data_isolation": "Los datos de cada tenant están completamente aislados",
+    "cross_tenant_access": "Prohibido excepto con rol admin",
+    "resource_prefix": "tenant://{tenant_id}/"
+  },
+  "payment_limits": {
+    "sales_assistant_max": 50000,
+    "support_agent_max": 0,
+    "admin_bot_max": null
+  },
+  "sla_rules": {
+    "whatsapp_first_response_minutes": 5,
+    "webchat_first_response_minutes": 2,
+    "email_first_response_hours": 4,
+    "escalation_minutes": 30
+  },
+  "lead_scoring": {
+    "source_points": {
+      "web": 30,
+      "whatsapp": 50, 
+      "manual": 70,
+      "api": 40
+    },
+    "email_domain_corporate_bonus": 20,
+    "phone_bonus": 10,
+    "previous_interaction_bonus": 15,
+    "assignment_threshold": 60
+  }
+}

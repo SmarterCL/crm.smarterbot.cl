@@ -1,0 +1,37 @@
+{
+  "customer://profile/{customer_id}": {
+    "description": "Perfil completo del cliente",
+    "content_type": "application/json",
+    "handler": "supabase_get_customer_profile"
+  },
+  
+  "customer://conversations/{customer_id}": {
+    "description": "Historial de conversaciones del cliente",
+    "content_type": "application/json", 
+    "handler": "chatwoot_get_customer_conversations"
+  },
+  
+  "customer://payments/{customer_id}": {
+    "description": "Historial de pagos del cliente",
+    "content_type": "application/json",
+    "handler": "flow_get_customer_payments"
+  },
+  
+  "system://health": {
+    "description": "Estado general del sistema",
+    "content_type": "application/json",
+    "handler": "system_health_check"
+  },
+  
+  "system://metrics": {
+    "description": "Métricas de uso del CRM",
+    "content_type": "application/json", 
+    "handler": "system_get_metrics"
+  },
+  
+  "tenant://config/{tenant_id}": {
+    "description": "Configuración específica del tenant",
+    "content_type": "application/json",
+    "handler": "supabase_get_tenant_config"
+  }
+}
