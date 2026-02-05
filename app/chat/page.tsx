@@ -138,7 +138,7 @@ export default function ChatPage() {
   const { user, isLoading } = useAuth()
   const [mensaje, setMensaje] = useState("")
   const [chatActivo, setChatActivo] = useState(1)
-  const mensajesFinRef = useRef(null)
+  const mensajesFinRef = useRef<HTMLDivElement>(null)
 
   // Scroll al final de los mensajes cuando se carga la página o se envía un mensaje
   useEffect(() => {

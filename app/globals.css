@@ -86,6 +86,22 @@
   }
 }
 
+@layer utilities {
+  .background-animate {
+    background-size: 400%;
+    animation: background-animate 15s ease infinite;
+  }
+}
+
+@keyframes background-animate {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
 @media (max-width: 768px) {
   html {
     font-size: 14px;

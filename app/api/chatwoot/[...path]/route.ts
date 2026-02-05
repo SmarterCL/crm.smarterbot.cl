@@ -205,28 +205,34 @@ async function handleRequest(
   }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { path: string[] } }) {
-  return handleRequest(request, 'GET', { params })
+export async function GET(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  const resolvedParams = await params;
+  return handleRequest(request, 'GET', { params: resolvedParams })
 }
 
-export async function POST(request: NextRequest, { params }: { params: { path: string[] } }) {
-  return handleRequest(request, 'POST', { params })
+export async function POST(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  const resolvedParams = await params;
+  return handleRequest(request, 'POST', { params: resolvedParams })
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { path: string[] } }) {
-  return handleRequest(request, 'PUT', { params })
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  const resolvedParams = await params;
+  return handleRequest(request, 'PUT', { params: resolvedParams })
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { path: string[] } }) {
-  return handleRequest(request, 'DELETE', { params })
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  const resolvedParams = await params;
+  return handleRequest(request, 'DELETE', { params: resolvedParams })
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { path: string[] } }) {
-  return handleRequest(request, 'PATCH', { params })
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  const resolvedParams = await params;
+  return handleRequest(request, 'PATCH', { params: resolvedParams })
 }
 
-export async function HEAD(request: NextRequest, { params }: { params: { path: string[] } }) {
-  return handleRequest(request, 'HEAD', { params })
+export async function HEAD(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  const resolvedParams = await params;
+  return handleRequest(request, 'HEAD', { params: resolvedParams })
 }
 
 export async function OPTIONS() {

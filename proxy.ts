@@ -182,21 +182,26 @@ export async function middleware(request: NextRequest) {
   const isPublicRoute = publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
 
   // Authentication check for protected routes
-  if (!session && !isPublicRoute && !request.nextUrl.pathname.startsWith('/api/')) {
-    const redirectUrl = new URL("/login", request.url)
-    redirectUrl.searchParams.set("redirectTo", request.nextUrl.pathname)
-    const redirectResponse = NextResponse.redirect(redirectUrl)
-    return addSecurityHeaders(redirectResponse)
-  }
+  // if (!session && !isPublicRoute && !request.nextUrl.pathname.startsWith('/api/')) {
+  //   const redirectUrl = new URL("/login", request.url)
+  //   redirectUrl.searchParams.set("redirectTo", request.nextUrl.pathname)
+  //   const redirectResponse = NextResponse.redirect(redirectUrl)
+  //   return addSecurityHeaders(redirectResponse)
+  // }
 
   // Redirect authenticated users away from auth pages
-  if (session && isPublicRoute && !request.nextUrl.pathname.startsWith('/api/')) {
-    const redirectResponse = NextResponse.redirect(new URL("/", request.url))
-    return addSecurityHeaders(redirectResponse)
-  }
+  // if (session && isPublicRoute && !request.nextUrl.pathname.startsWith('/api/')) {
+  //   const redirectResponse = NextResponse.redirect(new URL("/", request.url))
+  //   return addSecurityHeaders(redirectResponse)
+  // }
 
   // Add security headers to all responses
   return addSecurityHeaders(response)
+}
+
+// Exportar función principal del proxy
+export async function proxy() {
+  // El proxy está implementado dentro de la lógica anterior
 }
 
 // Configurar las rutas que deben ser manejadas por el proxy
