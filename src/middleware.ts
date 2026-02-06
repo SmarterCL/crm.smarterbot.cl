@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import { checkRateLimit, isProduction } from "./src/lib/security"
+import { checkRateLimit, isProduction } from "./lib/security"
 
 // Rate limiting configurations
 const API_RATE_LIMITS = {
