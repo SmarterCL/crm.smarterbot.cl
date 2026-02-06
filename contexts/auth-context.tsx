@@ -9,7 +9,7 @@ type AuthContextType = {
   user: User | null
   session: Session | null
   isLoading: boolean
-  signIn: (email: string, password: string) => Promise<{ error: any }>
+  signIn: (email: string, password: string) => Promise<{ data: any; error: any }>
   signInWithGoogle: () => Promise<{ error: any }>
   signUp: (email: string, password: string) => Promise<{ error: any; data: any }>
   signOut: () => Promise<void>
@@ -21,7 +21,7 @@ const defaultValue: AuthContextType = {
   user: null,
   session: null,
   isLoading: true,
-  signIn: async () => ({ error: "Authentication not available during server-side rendering" }),
+  signIn: async () => ({ data: null, error: "Authentication not available during server-side rendering" }),
   signInWithGoogle: async () => ({ error: "Authentication not available during server-side rendering" }),
   signUp: async () => ({ data: null, error: "Authentication not available during server-side rendering" }),
   signOut: async () => { },
@@ -93,16 +93,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = async (email: string, password: string) => {
     if (typeof window === 'undefined') {
       console.error("Cannot sign in from server side");
-      return { error: "Cannot sign in from server side" };
+      return { data: null, error: "Cannot sign in from server side" };
     }
 
     const supabase = createClientSupabaseClient();
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      return { error };
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      return { data, error };
     } catch (error) {
       console.error("Error signing in:", error);
-      return { error };
+      return { data: null, error };
     }
   };
 
@@ -135,7 +135,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const supabase = createClientSupabaseClient();
     try {
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/login?message=check-email`,
+        },
+      });
       return { data, error };
     } catch (error) {
       console.error("Error signing up:", error);

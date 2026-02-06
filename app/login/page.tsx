@@ -24,15 +24,17 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
-  const { signIn, signInWithGoogle } = useAuth()
+  const { signIn, signInWithGoogle, signOut } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get("redirectTo") || "/"
+  const prefilledEmail = searchParams.get("email") || ""
+  const message = searchParams.get("message")
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      email: prefilledEmail,
       password: "",
     },
   })
@@ -42,10 +44,17 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      const { error } = await signIn(values.email, values.password)
+      const { data, error } = await signIn(values.email, values.password)
 
       if (error) {
         setError(error.message)
+        return
+      }
+
+      // Validar si el email ha sido confirmado (para login recurrente)
+      if (data?.user && !data.user.email_confirmed_at) {
+        setError("Debes validar tu correo electrónico antes de iniciar sesión.")
+        await signOut() // Cerrar sesión para que no se mantenga el estado incompleto
         return
       }
 
@@ -115,6 +124,14 @@ export default function LoginPage() {
                   </Alert>
                 )}
 
+                {message === "check-email" && (
+                  <Alert className="bg-blue-500/20 text-blue-400 border-blue-500/50">
+                    <AlertDescription>
+                      Por favor, revisa tu correo electrónico para confirmar tu cuenta.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 <FormField
                   control={form.control}
                   name="email"
@@ -140,7 +157,7 @@ export default function LoginPage() {
                     <FormItem className="space-y-1">
                       <div className="flex justify-between items-center">
                         <FormLabel className="text-gray-300">Contraseña</FormLabel>
-                        <Link href="/forgot-password" size="sm" className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                        <Link href="/forgot-password" className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
                           ¿Olvidaste tu contraseña?
                         </Link>
                       </div>

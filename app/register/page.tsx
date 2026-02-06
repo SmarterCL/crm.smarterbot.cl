@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -30,11 +30,13 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false)
   const { signUp } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const prefilledEmail = searchParams.get("email") || ""
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      email: prefilledEmail,
       password: "",
       confirmPassword: "",
     },
@@ -53,14 +55,14 @@ export default function RegisterPage() {
         return
       }
 
-      // Si el usuario necesita confirmar su correo
-      if (data?.user && !data.session) {
+      // Si el usuario se registró y se inició sesión automáticamente o no requiere confirmación inmediata
+      if (data?.session) {
+        router.push("/")
+      } else if (data?.user) {
+        // Si el usuario necesita confirmar su correo y no se inició sesión
         setSuccess(
           "Te hemos enviado un enlace de confirmación a tu correo electrónico. Por favor, revisa tu bandeja de entrada.",
         )
-      } else {
-        // Si el usuario se registró y se inició sesión automáticamente
-        router.push("/")
       }
     } catch (err) {
       setError("Ocurrió un error inesperado. Por favor, intenta de nuevo.")

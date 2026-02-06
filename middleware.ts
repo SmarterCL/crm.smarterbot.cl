@@ -25,7 +25,7 @@ function getClientIdentifier(request: NextRequest): string {
   const realIp = request.headers.get('x-real-ip')
   const userAgent = request.headers.get('user-agent') || 'unknown'
   const ip = forwarded?.split(',')[0]?.trim() || realIp?.trim() || 'unknown'
-  
+
   // Create a unique identifier using IP + User-Agent hash
   return `${ip}:${userAgent.slice(0, 50)}`
 }
@@ -42,7 +42,7 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
   Object.entries(SECURITY_HEADERS).forEach(([key, value]) => {
     response.headers.set(key, value)
   })
-  
+
   // Add HSTS in production
   if (isProduction()) {
     response.headers.set(
@@ -50,27 +50,27 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
       'max-age=31536000; includeSubDomains; preload'
     )
   }
-  
+
   return response
 }
 
 function detectSuspiciousPatterns(request: NextRequest): boolean {
   const userAgent = request.headers.get('user-agent') || ''
   const url = request.url.toLowerCase()
-  
+
   // Block suspicious user agents
   const suspiciousAgents = [
     /bot/i, /crawler/i, /scraper/i, /spider/i,
     /curl/i, /wget/i, /python/i, /java/i,
     /go-http-client/i, /node-fetch/i
   ]
-  
+
   // Allow legitimate bots only on specific routes
   const isBotRoute = url.includes('/api/') || url.includes('/login') || url.includes('/register')
   if (isBotRoute && suspiciousAgents.some(agent => agent.test(userAgent))) {
     return true
   }
-  
+
   // Block suspicious URL patterns
   const suspiciousPatterns = [
     /\.\./,          // Directory traversal
@@ -79,7 +79,7 @@ function detectSuspiciousPatterns(request: NextRequest): boolean {
     /data:/i,        // Data protocol
     /file:/i,        // File protocol
   ]
-  
+
   return suspiciousPatterns.some(pattern => pattern.test(url))
 }
 
@@ -92,8 +92,8 @@ export async function middleware(request: NextRequest) {
       ip: getClientIdentifier(request),
       timestamp: new Date().toISOString()
     })
-    
-    return new Response('Forbidden', { 
+
+    return new Response('Forbidden', {
       status: 403,
       headers: SECURITY_HEADERS
     })
@@ -111,7 +111,7 @@ export async function middleware(request: NextRequest) {
   if (rateLimitCategory !== 'none') {
     const clientId = getClientIdentifier(request)
     const maxRequests = API_RATE_LIMITS[rateLimitCategory as keyof typeof API_RATE_LIMITS]
-    
+
     const rateLimitResult = checkRateLimit(`${rateLimitCategory}:${clientId}`, maxRequests)
     if (!rateLimitResult.allowed) {
       const errorResponse = NextResponse.json(
@@ -124,16 +124,16 @@ export async function middleware(request: NextRequest) {
         },
         { status: 429 }
       )
-      
+
       // Add rate limit headers
       errorResponse.headers.set('Retry-After', Math.ceil((rateLimitResult.resetTime! - Date.now()) / 1000).toString())
       errorResponse.headers.set('X-RateLimit-Limit', maxRequests.toString())
       errorResponse.headers.set('X-RateLimit-Remaining', '0')
       errorResponse.headers.set('X-RateLimit-Reset', rateLimitResult.resetTime!.toString())
-      
+
       return addSecurityHeaders(errorResponse)
     }
-    
+
     // Add rate limit info headers to successful responses
     response.headers.set('X-RateLimit-Limit', maxRequests.toString())
     response.headers.set('X-RateLimit-Remaining', (rateLimitResult.remaining || 0).toString())
@@ -170,10 +170,10 @@ export async function middleware(request: NextRequest) {
 
   // Define public routes
   const publicRoutes = [
-    "/login", 
-    "/register", 
-    "/reset-password", 
-    "/forgot-password", 
+    "/login",
+    "/register",
+    "/reset-password",
+    "/forgot-password",
     "/seed-database",
     "/api/auth/login",
     "/api/auth/register",
@@ -182,18 +182,18 @@ export async function middleware(request: NextRequest) {
   const isPublicRoute = publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
 
   // Authentication check for protected routes
-  // if (!session && !isPublicRoute && !request.nextUrl.pathname.startsWith('/api/')) {
-  //   const redirectUrl = new URL("/login", request.url)
-  //   redirectUrl.searchParams.set("redirectTo", request.nextUrl.pathname)
-  //   const redirectResponse = NextResponse.redirect(redirectUrl)
-  //   return addSecurityHeaders(redirectResponse)
-  // }
+  if (!session && !isPublicRoute && !request.nextUrl.pathname.startsWith('/api/')) {
+    const redirectUrl = new URL("/login", request.url)
+    redirectUrl.searchParams.set("redirectTo", request.nextUrl.pathname)
+    const redirectResponse = NextResponse.redirect(redirectUrl)
+    return addSecurityHeaders(redirectResponse)
+  }
 
   // Redirect authenticated users away from auth pages
-  // if (session && isPublicRoute && !request.nextUrl.pathname.startsWith('/api/')) {
-  //   const redirectResponse = NextResponse.redirect(new URL("/", request.url))
-  //   return addSecurityHeaders(redirectResponse)
-  // }
+  if (session && isPublicRoute && !request.nextUrl.pathname.startsWith('/api/')) {
+    const redirectResponse = NextResponse.redirect(new URL("/", request.url))
+    return addSecurityHeaders(redirectResponse)
+  }
 
   // Add security headers to all responses
   return addSecurityHeaders(response)
