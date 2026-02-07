@@ -3,6 +3,7 @@ import "@/app/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/contexts/auth-context"
 import { Analytics } from "@vercel/analytics/react"
+import { ChatwootWidget } from "@/components/chatwoot-widget"
 
 export const metadata = {
   title: "SmarterOS Hub",
@@ -18,6 +19,7 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <head>
         <script src="https://cdn.tailwindcss.com"></script>
+        {/* ... tailwind config ... */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -69,7 +71,10 @@ export default function RootLayout({
       </head>
       <body className="antialiased" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            {children}
+            <ChatwootWidget />
+          </AuthProvider>
         </ThemeProvider>
         <Analytics />
       </body>

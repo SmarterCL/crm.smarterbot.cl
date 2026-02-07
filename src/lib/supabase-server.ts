@@ -43,6 +43,12 @@ export const createServerComponentSupabaseClient = async () => {
           }
         },
       },
+      cookieOptions: {
+        domain: ".smarterbot.cl",
+        path: "/",
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      },
     }
   )
 }

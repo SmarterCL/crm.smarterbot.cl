@@ -20,7 +20,14 @@ export const createClientSupabaseClient = () => {
     throw new Error("Faltan las variables de entorno de Supabase para el cliente")
   }
 
-  clientSupabaseClient = createBrowserClient(supabaseUrl, supabaseAnonKey)
+  clientSupabaseClient = createBrowserClient(supabaseUrl, supabaseAnonKey, {
+    cookieOptions: {
+      domain: ".smarterbot.cl",
+      path: "/",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    },
+  })
 
   return clientSupabaseClient
 }
