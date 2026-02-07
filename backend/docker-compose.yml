@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  conductor:
+    build: .
+    container_name: smarter_conductor
+    restart: always
+    ports:
+      - "8000:80"
+    env_file:
+      - .env
+    environment:
+      - PORT=80
+      - ENVIRONMENT=production
+    networks:
+      - smarter_network
+
+networks:
+  smarter_network:
+    external: true # Assuming existing network from other services or remove line to create new

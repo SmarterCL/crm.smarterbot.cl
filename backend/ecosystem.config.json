@@ -1,0 +1,13 @@
+[
+    {
+        "id": "conductor-service",
+        "name": "smarter-conductor",
+        "script": "uvicorn app.main:app --host 0.0.0.0 --port 8000",
+        "cwd": "./backend",
+        "interpreter": "python3",
+        "env": {
+            "PORT": 8000,
+            "ENVIRONMENT": "production"
+        }
+    }
+]

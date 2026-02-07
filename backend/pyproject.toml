@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "smarter-conductor"
+version = "0.1.0"
+authors = [
+  { name="SmarterBOT", email="dev@smarterbot.cl" },
+]
+description = "SmarterOS Event Orchestrator"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "supabase",
+    "python-dotenv",
+    "pydantic",
+    "httpx",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/StartSmarterOS/smarter-conductor"
