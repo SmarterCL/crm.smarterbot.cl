@@ -13,7 +13,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Loader2 } from "lucide-react"
-import { createClientSupabaseClient } from "@/lib/supabase"
+import { createClientSupabaseClient } from "@/lib/supabase-client"
 
 const formSchema = z.object({
   password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),

@@ -3,22 +3,22 @@ import { z } from 'zod'
 // Environment validation schema
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  
+
   // Supabase
   NEXT_PUBLIC_SUPABASE_URL: z.string().url().min(1),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
-  
+
   // Chatwoot
   CHATWOOT_API_URL: z.string().url().min(1),
   CHATWOOT_ACCOUNT_ID: z.string().min(1),
   CHATWOOT_ACCESS_TOKEN: z.string().min(1),
-  
+
   // Internal auth tokens
   SEED_API_TOKEN: z.string().min(1).optional(),
-  
+
   // Rate limiting
-  RATE_LIMIT_REQUESTS_PER_MINUTE: z.string().transform(Number).default('60'),
+  RATE_LIMIT_REQUESTS_PER_MINUTE: z.string().default('60').transform(Number),
 })
 
 export function validateEnv() {
@@ -46,7 +46,7 @@ export function validateInternalToken(token: string): boolean {
   if (!env.SEED_API_TOKEN) {
     return isDevelopment() // Allow in dev without token
   }
-  
+
   return token === env.SEED_API_TOKEN
 }
 
@@ -54,7 +54,7 @@ export function validateInternalToken(token: string): boolean {
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
 
 export function checkRateLimit(
-  identifier: string, 
+  identifier: string,
   maxRequests: number = parseInt(env.RATE_LIMIT_REQUESTS_PER_MINUTE.toString())
 ): { allowed: boolean; resetTime?: number; remaining?: number } {
   const now = Date.now()
@@ -62,7 +62,7 @@ export function checkRateLimit(
   const key = identifier
 
   const record = rateLimitStore.get(key)
-  
+
   if (!record || now > record.resetTime) {
     rateLimitStore.set(key, {
       count: 1,
@@ -72,17 +72,17 @@ export function checkRateLimit(
   }
 
   if (record.count >= maxRequests) {
-    return { 
-      allowed: false, 
+    return {
+      allowed: false,
       resetTime: record.resetTime,
       remaining: 0
     }
   }
 
   record.count++
-  return { 
-    allowed: true, 
-    remaining: maxRequests - record.count 
+  return {
+    allowed: true,
+    remaining: maxRequests - record.count
   }
 }
 

@@ -14,7 +14,7 @@
     "pnpm": ">=10.0.0"
   },
   "volta": {
-    "node": "22.22.0",
+    "node": "24.0.0",
     "npm": "10.9.4",
     "pnpm": "10.28.2"
   },
@@ -28,7 +28,8 @@
     "typecheck:strict": "tsc --noEmit --strict",
     "security-check": "npm audit --audit-level=moderate",
     "build:production": "npm run typecheck && npm run lint && npm run build",
-    "precommit": "npm run typecheck && npm run lint"
+    "precommit": "npm run typecheck && npm run lint",
+    "mcp": "npx -y tsx --env-file=.env.local src/mcp/server.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

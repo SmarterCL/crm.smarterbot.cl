@@ -38,7 +38,7 @@ export type LeadResponse = z.infer<typeof LeadResponseSchema>;
 // Configuración de scoring basada en spec
 function calculateLeadScore(data: CreateLeadRequest): number {
   let score = 0;
-  
+
   // Puntos por fuente (basado en spec)
   const sourcePoints: Record<string, number> = {
     web: 30,
@@ -47,33 +47,38 @@ function calculateLeadScore(data: CreateLeadRequest): number {
     api: 40
   };
   score += sourcePoints[data.source] || 0;
-  
+
   // Bonus por email corporativo
   const corporateDomains = ['gmail.com', 'outlook.com', 'yahoo.com'];
   if (data.email && !corporateDomains.some(domain => data.email.includes(domain))) {
     score += 20;
   }
-  
+
   // Bonus por teléfono
   if (data.phone && data.phone.trim().length >= 8) {
     score += 10;
   }
-  
+
   return Math.min(score, 100); // Máximo 100
 }
 
 // Validación de duplicados
 async function checkDuplicateLead(email: string, tenant_id: string): Promise<boolean> {
   const supabase = createServerSupabaseClient();
-  
-  const { data: existing } = await supabase
+
+  const { data: existing, error } = await supabase
     .from('customers')
     .select('id')
     .eq('email', email)
     .eq('tenant_id', tenant_id)
     .eq('status', 'new') // Solo duplicados en estado new
-    .single();
-  
+    .maybeSingle();
+
+  if (error) {
+    console.error('Error checking duplicate lead:', error);
+    throw new Error(`Database error checking duplicates: ${error.message}`);
+  }
+
   return !!existing;
 }
 
@@ -86,22 +91,22 @@ export async function odoo_create_lead(request: CreateLeadRequest, context?: {
   try {
     // 1. Validar input
     const validated = CreateLeadSchema.parse(request);
-    
+
     // 2. Agregar tenant_id del contexto si no viene en request
     const tenant_id = validated.tenant_id || context?.tenant_id;
     if (!tenant_id) {
       throw new Error('tenant_id es requerido para crear un lead');
     }
-    
+
     // 3. Verificar duplicados
     const isDuplicate = await checkDuplicateLead(validated.email, tenant_id);
     if (isDuplicate) {
       throw new Error(`Ya existe un lead con email ${validated.email} en este tenant`);
     }
-    
+
     // 4. Calcular lead score
     const lead_score = calculateLeadScore(validated);
-    
+
     // 5. Asignar automáticamente si hay threshold
     let assigned_to = validated.assigned_to;
     if (!assigned_to && lead_score >= 60) {
@@ -109,10 +114,10 @@ export async function odoo_create_lead(request: CreateLeadRequest, context?: {
       // Por ahora se queda sin asignar
       assigned_to = undefined;
     }
-    
+
     // 6. Insertar en base de datos
     const supabase = createServerSupabaseClient();
-    
+
     const newLead = {
       name: validated.name,
       email: validated.email,
@@ -130,34 +135,34 @@ export async function odoo_create_lead(request: CreateLeadRequest, context?: {
         created_at: new Date().toISOString()
       }
     };
-    
+
     const { data, error } = await supabase
       .from('customers')
       .insert(newLead)
       .select()
       .single();
-    
+
     if (error) {
       console.error('❌ Error creating lead in database:', error);
       throw new Error(`Error en base de datos: ${error.message}`);
     }
-    
+
     // 7. Validar respuesta y retornar
     const response = LeadResponseSchema.parse({
       ...data,
       created_at: data.created_at,
       updated_at: data.updated_at
     });
-    
+
     console.log(`✅ Lead creado exitosamente: ${response.id} (score: ${lead_score})`);
     return response;
-    
+
   } catch (error) {
     if (error instanceof z.ZodError) {
       const errorMessage = error.errors.map(e => e.message).join(', ');
       throw new Error(`Validación fallida: ${errorMessage}`);
     }
-    
+
     console.error('❌ Error in odoo_create_lead:', error);
     throw error instanceof Error ? error : new Error('Error desconocido creando lead');
   }
